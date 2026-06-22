@@ -5,9 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>풍선 터뜨리기 게임</title>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+// Firebase 설정 (하드코딩)
+const firebaseConfig = {
+  apiKey: "AIzaSyB6Ui5Qh5cB1KdTu2LQNlda3Cz_Qu51kzY",
+  authDomain: "balloon-49bd6.firebaseapp.com",
+  databaseURL: "https://balloon-game-f299a-default-rtdb.firebaseio.com",
+  projectId: "balloon-49bd6",
+  storageBucket: "balloon-49bd6.firebasestorage.app",
+  messagingSenderId: "975592559865",
+  appId: "1:975592559865:web:772d9de2afb0622032fe28"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+</script>
 
 <style>
 :root{
@@ -24,50 +38,28 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
 body{display:flex;flex-direction:column;align-items:center;min-height:100vh}
-
-/* ── layout ── */
 #root{width:100%;max-width:680px;padding:0 16px 32px;flex:1}
 .screen{display:none;animation:fadeIn .25s ease}
 .screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-/* ── typography ── */
 h1{font-size:28px;font-weight:700;color:var(--purple-dark);letter-spacing:-.5px}
 h2{font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px}
-h3{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:12px}
 p{font-size:14px;color:var(--text2);line-height:1.6}
-
-/* ── cards ── */
 .card{background:var(--card);border-radius:var(--radius);border:0.5px solid rgba(127,119,221,.15);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
 .card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
-
-/* ── buttons ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;text-decoration:none}
-.btn-primary{background:var(--purple);color:#fff}
-.btn-primary:hover{background:var(--purple-dark)}
-.btn-secondary{background:transparent;color:var(--text2);border:1px solid rgba(0,0,0,.12)}
-.btn-secondary:hover{background:var(--gray-light)}
-.btn-teal{background:var(--teal);color:#fff}
-.btn-teal:hover{background:#0F6E56}
-.btn-coral{background:var(--coral);color:#fff}
-.btn-coral:hover{background:#993C1D}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--purple);color:#fff}.btn-primary:hover{background:var(--purple-dark)}
+.btn-secondary{background:transparent;color:var(--text2);border:1px solid rgba(0,0,0,.12)}.btn-secondary:hover{background:var(--gray-light)}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:#0F6E56}
+.btn-coral{background:var(--coral);color:#fff}.btn-coral:hover{background:#993C1D}
 .btn-lg{padding:16px 28px;font-size:16px;border-radius:var(--radius);width:100%}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-
-/* ── form ── */
-input[type=text],input[type=number],textarea,select{
-  width:100%;padding:10px 14px;border:1px solid rgba(0,0,0,.12);border-radius:var(--radius-sm);
-  font-size:14px;background:#fff;color:var(--text);outline:none;transition:border .15s
-}
-input:focus,textarea:focus,select:focus{border-color:var(--purple)}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 14px;border:1px solid rgba(0,0,0,.12);border-radius:var(--radius-sm);font-size:14px;background:#fff;color:var(--text);outline:none;transition:border .15s}
+input:focus{border-color:var(--purple)}
 label{font-size:13px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500}
 .field{margin-bottom:14px}
-.field-row{display:flex;gap:10px;align-items:flex-end}
-.field-row .field{flex:1;margin-bottom:0}
 input[type=range]{width:100%;accent-color:var(--purple)}
-
-/* ── HOME ── */
 #home{padding-top:48px;text-align:center}
 .home-logo{font-size:56px;margin-bottom:16px}
 .home-tagline{font-size:16px;color:var(--text2);margin-bottom:40px}
@@ -75,20 +67,11 @@ input[type=range]{width:100%;accent-color:var(--purple)}
 .home-btn{padding:20px;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;border:none;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:6px}
 .home-btn-icon{font-size:32px}
 .home-btn-sub{font-size:12px;font-weight:400;opacity:.8}
-.home-btn.teacher{background:var(--purple);color:#fff}
-.home-btn.teacher:hover{background:var(--purple-dark);transform:translateY(-2px)}
-.home-btn.student{background:var(--teal);color:#fff}
-.home-btn.student:hover{background:#0F6E56;transform:translateY(-2px)}
-
-/* ── CONFIG SECTION ── */
-.firebase-notice{background:var(--amber-light);border:1px solid var(--amber);border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;color:#633806;margin-bottom:16px;line-height:1.6}
-.firebase-notice code{background:rgba(0,0,0,.08);padding:1px 5px;border-radius:4px;font-size:12px}
-
-/* ── item grid ── */
+.home-btn.teacher{background:var(--purple);color:#fff}.home-btn.teacher:hover{background:var(--purple-dark);transform:translateY(-2px)}
+.home-btn.student{background:var(--teal);color:#fff}.home-btn.student:hover{background:#0F6E56;transform:translateY(-2px)}
 .ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px;margin-bottom:8px}
 .is{border:1px solid rgba(0,0,0,.08);border-radius:var(--radius-sm);padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;background:#fafafa;min-height:62px;position:relative;cursor:pointer;transition:all .15s}
-.is:hover{border-color:var(--purple)}
-.is.ans{border-color:var(--teal);background:var(--teal-light)}
+.is:hover{border-color:var(--purple)}.is.ans{border-color:var(--teal);background:var(--teal-light)}
 .is-lbl{font-size:10px;color:var(--text3);text-align:center;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .is-rm{position:absolute;top:2px;right:2px;width:14px;height:14px;background:#fde;border:none;border-radius:50%;cursor:pointer;font-size:8px;color:#c00;display:none;align-items:center;justify-content:center}
 .is:hover .is-rm{display:flex}
@@ -97,24 +80,18 @@ input[type=range]{width:100%;accent-color:var(--purple)}
 .chip{display:inline-block;padding:3px 10px;border:1px solid rgba(0,0,0,.1);border-radius:16px;font-size:12px;cursor:pointer;background:#fff;color:var(--text2);margin:2px;transition:all .15s}
 .chip:hover{border-color:var(--purple);color:var(--purple)}
 .ans-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:var(--teal-light);color:var(--teal);border-radius:10px;font-size:11px;margin:2px;font-weight:600}
-
-/* ── waiting room ── */
 .code-display{background:var(--purple-light);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:16px}
 .code-number{font-size:52px;font-weight:800;color:var(--purple-dark);letter-spacing:6px;font-family:monospace}
 .code-label{font-size:13px;color:var(--purple);margin-top:6px;font-weight:500}
 .player-list{display:flex;flex-wrap:wrap;gap:8px;min-height:48px}
 .player-chip{padding:6px 14px;background:var(--purple-light);border-radius:20px;font-size:13px;font-weight:600;color:var(--purple-dark)}
-.player-chip.ready{background:var(--teal-light);color:#0F6E56}
-
-/* ── game (student) ── */
 #game-area{position:relative;width:100%;height:520px;background:linear-gradient(180deg,#d4d0f5 0%,#b8ecd8 100%);border-radius:var(--radius);overflow:hidden;border:1px solid rgba(127,119,221,.2)}
 .ghud{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:center;z-index:10;gap:5px;flex-wrap:wrap}
 .hb{background:rgba(255,255,255,.9);border-radius:16px;padding:4px 12px;font-size:13px;font-weight:600;color:var(--text)}
 .hs{background:rgba(127,119,221,.2);border-radius:16px;padding:4px 12px;font-size:13px;font-weight:600;color:var(--purple-dark)}
 .spip{display:flex;gap:4px;align-items:center}
 .spip-dot{width:8px;height:8px;border-radius:50%;background:rgba(127,119,221,.25);transition:background .3s}
-.spip-dot.done{background:var(--purple)}
-.spip-dot.cur{background:var(--purple-dark);box-shadow:0 0 0 2px rgba(127,119,221,.4)}
+.spip-dot.done{background:var(--purple)}.spip-dot.cur{background:var(--purple-dark);box-shadow:0 0 0 2px rgba(127,119,221,.4)}
 .bwrap{position:absolute;cursor:pointer;user-select:none;width:150px}
 .timer-bar-wrap{position:absolute;bottom:0;left:0;right:0;height:5px;background:rgba(255,255,255,.3);border-radius:2px}
 .timer-bar{height:5px;background:var(--purple);border-radius:2px;width:100%}
@@ -126,8 +103,6 @@ input[type=range]{width:100%;accent-color:var(--purple)}
 @keyframes confFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}
 .conf{position:absolute;width:8px;height:8px;border-radius:2px;pointer-events:none;animation:confFall 1.3s ease-out forwards}
 .game-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.92);z-index:20;gap:10px;border-radius:var(--radius)}
-
-/* ── results (teacher) ── */
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
 .stat-card{background:var(--purple-light);border-radius:var(--radius-sm);padding:14px;text-align:center}
 .stat-num{font-size:28px;font-weight:800;color:var(--purple-dark)}
@@ -135,66 +110,33 @@ input[type=range]{width:100%;accent-color:var(--purple)}
 .leaderboard{width:100%;border-collapse:collapse}
 .leaderboard th{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:6px 10px;text-align:left;border-bottom:1px solid rgba(0,0,0,.07)}
 .leaderboard td{padding:9px 10px;font-size:14px;border-bottom:1px solid rgba(0,0,0,.05)}
-.leaderboard tr:first-child td{font-weight:700;color:var(--purple-dark)}
 .rank-badge{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border-radius:50%;font-size:12px;font-weight:700;background:var(--gray-light);color:var(--text2)}
-.rank-badge.r1{background:#FAC775;color:#633806}
-.rank-badge.r2{background:#D3D1C7;color:#444}
-.rank-badge.r3{background:#F5C4B3;color:#712B13}
-.hit-bar{display:flex;gap:4px;align-items:center}
+.rank-badge.r1{background:#FAC775;color:#633806}.rank-badge.r2{background:#D3D1C7;color:#444}.rank-badge.r3{background:#F5C4B3;color:#712B13}
+.hit-bar{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .hit-dot{width:10px;height:10px;border-radius:50%}
-.hit-dot.hit{background:var(--teal)}
-.hit-dot.miss{background:var(--coral-light);border:1px solid var(--coral)}
+.hit-dot.hit{background:var(--teal)}.hit-dot.miss{background:var(--coral-light);border:1px solid var(--coral)}
 .badge{display:inline-block;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:600}
 .badge-wait{background:var(--amber-light);color:var(--amber)}
 .badge-play{background:var(--purple-light);color:var(--purple-dark)}
 .badge-done{background:var(--teal-light);color:var(--teal)}
-
-/* ── misc ── */
-.divider{height:1px;background:rgba(0,0,0,.07);margin:16px 0}
 .empty{text-align:center;padding:20px;color:var(--text3);font-size:13px}
-.notice{background:var(--gray-light);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text2);margin-bottom:10px}
 .tab-bar{display:flex;border-bottom:1px solid rgba(0,0,0,.08);margin-bottom:16px}
 .tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text3);border-bottom:2px solid transparent;transition:all .15s}
 .tab.active{color:var(--purple-dark);border-bottom-color:var(--purple)}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tog{width:36px;height:20px;background:#ccc;border-radius:10px;position:relative;cursor:pointer;border:none;flex-shrink:0;transition:background .2s}
+.tog.on{background:var(--purple)}
+.tog::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s}
+.tog.on::after{transform:translateX(16px)}
+.active-lv{background:var(--purple)!important;color:#fff!important;border-color:var(--purple)!important}
+.ls{display:flex;gap:6px}
 </style>
 </head>
 <body>
 <div id="root">
 
-<!-- ══════════════ SCREENS ══════════════ -->
-
-<!-- 0. Firebase Config -->
-<div id="screen-config" class="screen active">
-  <div style="padding-top:40px">
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="font-size:48px;margin-bottom:10px">🎈</div>
-      <h1>풍선 터뜨리기</h1>
-      <p style="margin-top:6px">시작 전에 Firebase 설정을 입력해 주세요</p>
-    </div>
-    <div class="firebase-notice">
-      <b>Firebase 설정 방법</b><br>
-      Firebase 콘솔 → 프로젝트 설정 → 일반 탭 → 내 앱 → <code>firebaseConfig</code> 값을 복사해 아래에 입력하세요.<br><br>
-      Realtime Database도 활성화 필요: Firebase 콘솔 → Realtime Database → 데이터베이스 만들기 → 보안 규칙을 <b>테스트 모드</b>로 설정
-    </div>
-    <div class="card">
-      <div class="field"><label>API Key</label><input type="text" id="cfg-apikey" placeholder="AIza..."></div>
-      <div class="field"><label>Auth Domain</label><input type="text" id="cfg-domain" placeholder="yourproject.firebaseapp.com"></div>
-      <div class="field"><label>Database URL</label><input type="text" id="cfg-dburl" placeholder="https://yourproject-default-rtdb.firebaseio.com"></div>
-      <div class="field"><label>Project ID</label><input type="text" id="cfg-projectid" placeholder="yourproject"></div>
-      <div class="field"><label>Storage Bucket</label><input type="text" id="cfg-bucket" placeholder="yourproject.appspot.com"></div>
-      <div class="field"><label>Messaging Sender ID</label><input type="text" id="cfg-senderid" placeholder="123456789"></div>
-      <div class="field"><label>App ID</label><input type="text" id="cfg-appid" placeholder="1:123456789:web:abc..."></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="initFirebase()">연결 확인 후 시작 →</button>
-      </div>
-      <p id="cfg-error" style="color:#c00;font-size:13px;margin-top:8px;display:none"></p>
-    </div>
-  </div>
-</div>
-
 <!-- 1. Home -->
-<div id="screen-home" class="screen">
+<div id="screen-home" class="screen active">
   <div id="home">
     <div class="home-logo">🎈</div>
     <h1>풍선 터뜨리기</h1>
@@ -221,8 +163,6 @@ input[type=range]{width:100%;accent-color:var(--purple)}
       <button class="btn btn-secondary" onclick="goScreen('screen-home')" style="padding:7px 12px">← 홈</button>
       <h2>게임 설정</h2>
     </div>
-
-    <!-- Items -->
     <div class="card">
       <div class="card-title">풍선에 넣을 단어 / 그림</div>
       <div style="display:flex;gap:6px;margin-bottom:8px">
@@ -242,20 +182,16 @@ input[type=range]{width:100%;accent-color:var(--purple)}
         <span style="font-size:18px">📁</span><span>이미지 업로드</span>
       </label>
     </div>
-
-    <!-- Answers -->
     <div class="card">
       <div class="card-title">정답 지정 (클릭으로 선택)</div>
       <div id="agrid" class="ig"><div class="empty">위에서 항목을 추가하세요</div></div>
       <div id="alist" style="margin-top:6px"></div>
     </div>
-
-    <!-- Game settings -->
     <div class="card">
       <div class="card-title">게임 설정</div>
       <div class="field">
         <label>시작 단계</label>
-        <div style="display:flex;gap:8px">
+        <div class="ls">
           <button class="btn btn-secondary active-lv" id="lv1" onclick="setLv(1)" style="flex:1">1단계</button>
           <button class="btn btn-secondary" id="lv2" onclick="setLv(2)" style="flex:1">2단계</button>
           <button class="btn btn-secondary" id="lv3" onclick="setLv(3)" style="flex:1">3단계</button>
@@ -278,7 +214,6 @@ input[type=range]{width:100%;accent-color:var(--purple)}
         <button class="tog on" id="ttog" onclick="toggleTimer()"></button>
       </div>
     </div>
-
     <button class="btn btn-primary btn-lg" onclick="createGame()">🎈 게임 개설 — 코드 생성</button>
   </div>
 </div>
@@ -313,36 +248,23 @@ input[type=range]{width:100%;accent-color:var(--purple)}
       <h2>실시간 결과</h2>
       <span id="game-status-badge" class="badge badge-play">진행 중</span>
     </div>
-
     <div class="result-grid">
-      <div class="stat-card">
-        <div class="stat-num" id="stat-players">0</div>
-        <div class="stat-lbl">총 참여 학생</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" id="stat-done">0</div>
-        <div class="stat-lbl">완료</div>
-      </div>
+      <div class="stat-card"><div class="stat-num" id="stat-players">0</div><div class="stat-lbl">총 참여 학생</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-done">0</div><div class="stat-lbl">완료</div></div>
     </div>
-
     <div class="tab-bar">
       <button class="tab active" onclick="switchResTab('rank')">점수 순위</button>
       <button class="tab" onclick="switchResTab('detail')">스테이지별 현황</button>
     </div>
-
     <div id="res-rank">
       <div class="card" style="padding:0;overflow:hidden">
-        <table class="leaderboard" id="leaderboard-table">
+        <table class="leaderboard">
           <thead><tr><th>순위</th><th>이름</th><th>점수</th><th>상태</th></tr></thead>
-          <tbody id="leaderboard-body"><tr><td colspan="4" class="empty">학생 데이터를 기다리는 중...</td></tr></tbody>
+          <tbody id="leaderboard-body"><tr><td colspan="4" class="empty">대기 중...</td></tr></tbody>
         </table>
       </div>
     </div>
-
-    <div id="res-detail" style="display:none">
-      <div id="stage-detail-wrap"></div>
-    </div>
-
+    <div id="res-detail" style="display:none"><div id="stage-detail-wrap"></div></div>
     <div class="btn-row" style="margin-top:16px">
       <button class="btn btn-coral" onclick="endGameTeacher()">게임 종료</button>
       <button class="btn btn-secondary" onclick="goScreen('screen-home')">홈으로</button>
@@ -412,95 +334,40 @@ input[type=range]{width:100%;accent-color:var(--purple)}
   <div style="padding-top:48px;text-align:center">
     <div style="font-size:56px;margin-bottom:16px" id="final-emoji">🏆</div>
     <h2 id="final-title">게임 완료!</h2>
-    <p id="final-sub" style="margin-top:6px">수고하셨습니다</p>
+    <p id="final-sub" style="margin-top:6px"></p>
     <div class="code-display" style="max-width:240px;margin:24px auto">
       <div class="stat-num" id="final-score">0</div>
       <div class="stat-lbl">최종 점수</div>
     </div>
-    <div id="final-rank-wrap" class="notice" style="max-width:320px;margin:0 auto 20px;text-align:center"></div>
+    <div style="background:var(--teal-light);color:var(--teal);border-radius:var(--radius-sm);padding:10px 16px;max-width:320px;margin:0 auto 20px;font-size:13px;font-weight:600">결과가 강사 화면에 전송되었습니다 ✓</div>
     <button class="btn btn-secondary" onclick="goScreen('screen-home')">홈으로</button>
   </div>
 </div>
 
-</div><!-- /root -->
-
-<!-- toggle style -->
-<style>
-.tog{width:36px;height:20px;background:#ccc;border-radius:10px;position:relative;cursor:pointer;border:none;flex-shrink:0;transition:background .2s}
-.tog.on{background:var(--purple)}
-.tog::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s}
-.tog.on::after{transform:translateX(16px)}
-.active-lv{background:var(--purple)!important;color:#fff!important;border-color:var(--purple)!important}
-</style>
+</div>
 
 <script>
-/* ═══════════════════════════════════════
-   FIREBASE & APP STATE
-═══════════════════════════════════════ */
-let db = null;
 const FILLS=['#B5A9F0','#6DCFAD','#F5A882','#7FC3F0','#A8D46F','#F8CE80','#F0A0C0'];
 const DARKS=['#7F77DD','#1D9E75','#D85A30','#378ADD','#639922','#BA7517','#D4537E'];
 const RISE_MS=1200, BW=150, BH=170;
 
 const APP={
-  role:null, gameCode:null, playerId:null, playerName:null,
-  items:[], answers:[], level:1, stageCount:3, answerCount:2, inflateTime:5, showTimer:true,
-  // student game state
-  score:0, lives:3, curLevel:1, stagesDone:0, answersHit:0,
-  queue:[], queueIdx:0, gameActive:false, stageRunning:false,
-  timers:[], listeners:[],
-  // teacher
-  players:{}, unsubResults:null
+  role:null,gameCode:null,playerId:null,playerName:null,
+  items:[],answers:[],level:1,stageCount:3,answerCount:2,inflateTime:5,showTimer:true,
+  score:0,lives:3,curLevel:1,stagesDone:0,answersHit:0,
+  queue:[],queueIdx:0,gameActive:false,stageRunning:false,
+  timers:[],listeners:[],players:{}
 };
 
-/* ── Firebase init ── */
-function initFirebase(){
-  const cfg={
-    apiKey:       v('cfg-apikey'),
-    authDomain:   v('cfg-domain'),
-    databaseURL:  v('cfg-dburl'),
-    projectId:    v('cfg-projectid'),
-    storageBucket:v('cfg-bucket'),
-    messagingSenderId:v('cfg-senderid'),
-    appId:        v('cfg-appid')
-  };
-  const missing=Object.entries(cfg).filter(([,val])=>!val.trim());
-  if(missing.length){showErr('cfg-error','모든 필드를 입력해 주세요.');return;}
-  try{
-    if(firebase.apps.length) firebase.app().delete();
-    firebase.initializeApp(cfg);
-    db=firebase.database();
-    // connection test
-    db.ref('.info/connected').once('value',snap=>{
-      if(snap.val()===true){
-        hideErr('cfg-error');
-        goScreen('screen-home');
-      } else {
-        showErr('cfg-error','Firebase에 연결할 수 없습니다. Database URL과 보안 규칙을 확인해 주세요.');
-      }
-    });
-  } catch(e){showErr('cfg-error','설정 오류: '+e.message);}
-}
-
-/* ── screens ── */
 function goScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
-
-/* ═══════════════════════════════════════
-   TEACHER — SETUP
-═══════════════════════════════════════ */
-function setLv(l){
-  APP.level=l;
-  [1,2,3].forEach(n=>{
-    const b=document.getElementById('lv'+n);
-    b.classList.toggle('active-lv',n===l);
-  });
-}
+function setLv(l){APP.level=l;[1,2,3].forEach(n=>{document.getElementById('lv'+n).classList.toggle('active-lv',n===l);});}
 function toggleTimer(){APP.showTimer=!APP.showTimer;document.getElementById('ttog').classList.toggle('on',APP.showTimer);}
 
+/* items */
 function renderItems(){
   const g=document.getElementById('igrid');
   g.innerHTML=APP.items.length?'':'<div class="empty">항목이 없습니다</div>';
@@ -542,37 +409,22 @@ function handleImg(e){
   e.target.value='';
 }
 
-/* ── Create game ── */
+/* teacher */
 async function createGame(){
   if(!APP.items.length){alert('항목을 먼저 추가해 주세요.');return;}
   if(!APP.answers.length){alert('정답을 하나 이상 지정해 주세요.');return;}
   APP.inflateTime=parseInt(document.getElementById('it-in').value);
   APP.stageCount=parseInt(document.getElementById('sc-in').value);
   APP.answerCount=parseInt(document.getElementById('ac-in').value);
-
   const code=String(100000+Math.floor(Math.random()*900000));
-  APP.gameCode=code;
-  APP.role='teacher';
-
-  // Serialize items — images as base64 (strip large data if too big; warn)
+  APP.gameCode=code;APP.role='teacher';
   const itemsToSave=APP.items.map(i=>i.type==='image'
-    ?{type:'image',label:i.label,data:i.data.substring(0,200000)}  // cap at ~200KB
+    ?{type:'image',label:i.label,data:i.data.substring(0,200000)}
     :{type:'text',label:i.label,data:null});
-
   await db.ref(`games/${code}`).set({
-    settings:{
-      items:itemsToSave,
-      answers:APP.answers,
-      level:APP.level,
-      stageCount:APP.stageCount,
-      answerCount:APP.answerCount,
-      inflateTime:APP.inflateTime,
-      showTimer:APP.showTimer
-    },
-    status:'waiting',
-    createdAt:Date.now()
+    settings:{items:itemsToSave,answers:APP.answers,level:APP.level,stageCount:APP.stageCount,answerCount:APP.answerCount,inflateTime:APP.inflateTime,showTimer:APP.showTimer},
+    status:'waiting',createdAt:Date.now()
   });
-
   document.getElementById('game-code-display').textContent=code;
   goScreen('screen-teacher-wait');
   listenPlayers(code);
@@ -581,10 +433,8 @@ async function createGame(){
 function listenPlayers(code){
   const ref=db.ref(`games/${code}/players`);
   ref.on('value',snap=>{
-    const data=snap.val()||{};
-    APP.players=data;
-    const names=Object.values(data);
-    const count=names.length;
+    const data=snap.val()||{};APP.players=data;
+    const names=Object.values(data);const count=names.length;
     document.getElementById('player-count-label').textContent=count+'명 접속 중';
     document.getElementById('player-count-badge').textContent=count+'명';
     const list=document.getElementById('player-list');
@@ -592,7 +442,7 @@ function listenPlayers(code){
     list.innerHTML=names.map(p=>`<div class="player-chip">${p.name||'?'}</div>`).join('');
     const btn=document.getElementById('start-btn');
     btn.disabled=count<1;
-    btn.textContent=count>0?`게임 시작 (${count}명)`:'게임 시작 (1명 이상 필요)';
+    btn.textContent=count>0?`게임 시작 (${count}명 참여 중)`:'게임 시작 (1명 이상 필요)';
   });
   APP.listeners.push(()=>ref.off());
 }
@@ -602,14 +452,11 @@ async function teacherStartGame(){
   goScreen('screen-teacher-results');
   listenResults(APP.gameCode);
 }
-
 async function cancelGame(){
-  if(APP.gameCode) await db.ref(`games/${APP.gameCode}/status`).set('cancelled');
-  cleanupListeners();
-  goScreen('screen-home');
+  if(APP.gameCode)await db.ref(`games/${APP.gameCode}/status`).set('cancelled');
+  cleanupListeners();goScreen('screen-home');
 }
 
-/* ── Teacher Results ── */
 let resTab='rank';
 function switchResTab(t){
   resTab=t;
@@ -617,145 +464,91 @@ function switchResTab(t){
   document.getElementById('res-rank').style.display=t==='rank'?'block':'none';
   document.getElementById('res-detail').style.display=t==='detail'?'block':'none';
 }
-
 function listenResults(code){
   const ref=db.ref(`games/${code}/players`);
-  ref.on('value',snap=>{
-    const data=snap.val()||{};
-    APP.players=data;
-    renderResults(data);
-  });
+  ref.on('value',snap=>{APP.players=snap.val()||{};renderResults(APP.players);});
   APP.listeners.push(()=>ref.off());
 }
-
 function renderResults(data){
   const players=Object.values(data);
-  const total=players.length;
-  const done=players.filter(p=>p.status==='done').length;
+  const total=players.length,done=players.filter(p=>p.status==='done').length;
   document.getElementById('stat-players').textContent=total;
   document.getElementById('stat-done').textContent=done;
-  if(done===total&&total>0) document.getElementById('game-status-badge').className='badge badge-done';
-
-  // Leaderboard
+  if(done===total&&total>0)document.getElementById('game-status-badge').className='badge badge-done';
   const sorted=[...players].sort((a,b)=>(b.score||0)-(a.score||0));
   const tbody=document.getElementById('leaderboard-body');
   if(!sorted.length){tbody.innerHTML='<tr><td colspan="4" class="empty">대기 중...</td></tr>';return;}
   tbody.innerHTML=sorted.map((p,i)=>{
-    const rankClass=i===0?'r1':i===1?'r2':i===2?'r3':'';
-    const statusBadge=p.status==='done'?'<span class="badge badge-done">완료</span>':p.status==='playing'?'<span class="badge badge-play">게임 중</span>':'<span class="badge badge-wait">대기</span>';
-    return `<tr>
-      <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
-      <td>${p.name||'?'}</td>
-      <td style="font-weight:700;color:var(--purple-dark)">${p.score||0}</td>
-      <td>${statusBadge}</td>
-    </tr>`;
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    const sb=p.status==='done'?'<span class="badge badge-done">완료</span>':p.status==='playing'?'<span class="badge badge-play">게임 중</span>':'<span class="badge badge-wait">대기</span>';
+    return `<tr><td><span class="rank-badge ${rc}">${i+1}</span></td><td>${p.name||'?'}</td><td style="font-weight:700;color:var(--purple-dark)">${p.score||0}</td><td>${sb}</td></tr>`;
   }).join('');
-
-  // Stage detail
-  const stageWrap=document.getElementById('stage-detail-wrap');
-  stageWrap.innerHTML='';
+  const sw=document.getElementById('stage-detail-wrap');sw.innerHTML='';
   players.forEach(p=>{
     const hits=p.stageHits||[];
     const card=document.createElement('div');card.className='card';
-    card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <b style="font-size:14px">${p.name||'?'}</b>
-      <span style="font-size:13px;color:var(--purple-dark);font-weight:700">${p.score||0}점</span>
-    </div>
+    card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><b style="font-size:14px">${p.name||'?'}</b><span style="font-size:13px;color:var(--purple-dark);font-weight:700">${p.score||0}점</span></div>
     <div class="hit-bar">${hits.map(h=>`<div class="hit-dot ${h?'hit':'miss'}" title="${h?'정답':'오답/미스'}"></div>`).join('')||'<span style="font-size:12px;color:var(--text3)">아직 데이터 없음</span>'}</div>`;
-    stageWrap.appendChild(card);
+    sw.appendChild(card);
   });
 }
-
 async function endGameTeacher(){
-  if(APP.gameCode) await db.ref(`games/${APP.gameCode}/status`).set('ended');
-  cleanupListeners();
-  goScreen('screen-home');
+  if(APP.gameCode)await db.ref(`games/${APP.gameCode}/status`).set('ended');
+  cleanupListeners();goScreen('screen-home');
 }
 
-/* ═══════════════════════════════════════
-   STUDENT — JOIN
-═══════════════════════════════════════ */
+/* student */
 async function joinGame(){
-  const code=v('join-code').trim();
-  const name=v('join-name').trim();
-  if(code.length!==6||!/^\d+$/.test(code)){showErr('join-error','6자리 숫자 코드를 입력해 주세요.');return;}
-  if(!name){showErr('join-error','닉네임을 입력해 주세요.');return;}
-
+  const code=document.getElementById('join-code').value.trim();
+  const name=document.getElementById('join-name').value.trim();
+  const err=document.getElementById('join-error');
+  err.style.display='none';
+  if(code.length!==6||!/^\d+$/.test(code)){err.textContent='6자리 숫자 코드를 입력해 주세요.';err.style.display='block';return;}
+  if(!name){err.textContent='닉네임을 입력해 주세요.';err.style.display='block';return;}
   const snap=await db.ref(`games/${code}`).once('value');
-  if(!snap.exists()){showErr('join-error','게임을 찾을 수 없습니다. 코드를 다시 확인해 주세요.');return;}
+  if(!snap.exists()){err.textContent='게임을 찾을 수 없습니다. 코드를 다시 확인해 주세요.';err.style.display='block';return;}
   const gameData=snap.val();
-  if(gameData.status==='ended'||gameData.status==='cancelled'){showErr('join-error','이미 종료된 게임입니다.');return;}
-
-  APP.role='student';
-  APP.gameCode=code;
-  APP.playerName=name;
-
-  // Register player
+  if(gameData.status==='ended'||gameData.status==='cancelled'){err.textContent='이미 종료된 게임입니다.';err.style.display='block';return;}
+  APP.role='student';APP.gameCode=code;APP.playerName=name;
   const playerRef=db.ref(`games/${code}/players`).push();
   APP.playerId=playerRef.key;
   await playerRef.set({name,score:0,status:'waiting',stageHits:[],joinedAt:Date.now()});
-
-  // Load settings
   const s=gameData.settings;
-  APP.items=s.items||[];
-  APP.answers=s.answers||[];
-  APP.level=s.level||1;
-  APP.stageCount=s.stageCount||3;
-  APP.answerCount=s.answerCount||2;
-  APP.inflateTime=s.inflateTime||5;
-  APP.showTimer=s.showTimer!==false;
-
+  APP.items=s.items||[];APP.answers=s.answers||[];APP.level=s.level||1;
+  APP.stageCount=s.stageCount||3;APP.answerCount=s.answerCount||2;
+  APP.inflateTime=s.inflateTime||5;APP.showTimer=s.showTimer!==false;
   document.getElementById('student-code-display').textContent=code;
   document.getElementById('student-name-display').textContent=name+'님';
-  hideErr('join-error');
   goScreen('screen-student-wait');
-
-  // Listen for other players
   const pRef=db.ref(`games/${code}/players`);
   pRef.on('value',snap=>{
     const data=snap.val()||{};
-    const wrap=document.getElementById('student-wait-players');
-    wrap.innerHTML=Object.values(data).map(p=>`<div class="player-chip">${p.name}</div>`).join('');
+    document.getElementById('student-wait-players').innerHTML=Object.values(data).map(p=>`<div class="player-chip">${p.name}</div>`).join('');
   });
   APP.listeners.push(()=>pRef.off());
-
-  // Listen for game start
   const statusRef=db.ref(`games/${code}/status`);
   statusRef.on('value',snap=>{
     const st=snap.val();
-    if(st==='playing') startStudentGame();
-    if(st==='ended'||st==='cancelled'){
-      cleanupListeners();
-      alert('게임이 종료되었습니다.');
-      goScreen('screen-home');
-    }
+    if(st==='playing')startStudentGame();
+    if(st==='ended'||st==='cancelled'){cleanupListeners();alert('게임이 종료되었습니다.');goScreen('screen-home');}
   });
   APP.listeners.push(()=>statusRef.off());
 }
 
-/* ═══════════════════════════════════════
-   STUDENT — GAME
-═══════════════════════════════════════ */
 function startStudentGame(){
   cleanupListeners();
-  APP.score=0; APP.lives=3; APP.curLevel=APP.level;
-  APP.stagesDone=0; APP.answersHit=0;
+  APP.score=0;APP.lives=3;APP.curLevel=APP.level;APP.stagesDone=0;APP.answersHit=0;
   goScreen('screen-student-game');
   updatePlayerDB({status:'playing',score:0,stageHits:[]});
   runStage();
 }
-
 function runStage(){
-  APP.stageRunning=true; APP.gameActive=true; APP.answersHit=0;
+  APP.stageRunning=true;APP.gameActive=true;APP.answersHit=0;
   clearT();
   document.getElementById('game-overlay').style.display='none';
   document.getElementById('bc').innerHTML='';
-  updateHUD();
-  buildQueue();
-  APP.queueIdx=0;
-  showNextBalloon();
+  updateHUD();buildQueue();APP.queueIdx=0;showNextBalloon();
 }
-
 function buildQueue(){
   const ansItems=APP.answers.length?shuffle([...APP.answers]):[];
   const decoyItems=APP.items.map((_,i)=>i).filter(i=>!APP.answers.includes(i));
@@ -771,7 +564,6 @@ function buildQueue(){
   }
   APP.queue=shuffle(seq);
 }
-
 function showNextBalloon(){
   if(!APP.stageRunning||!APP.gameActive)return;
   if(APP.queueIdx>=APP.queue.length){buildQueue();APP.queueIdx=0;}
@@ -781,10 +573,8 @@ function showNextBalloon(){
   const pad=20,top=52;
   const x=pad+Math.random()*(aW-BW-pad*2);
   const y=top+pad+Math.random()*(aH-BH-top-pad*2-30);
-  const id='b-'+Date.now();
-  spawnBalloon(desc,id,x,y);
+  spawnBalloon(desc,'b-'+Date.now(),x,y);
 }
-
 function spawnBalloon(desc,id,x,y){
   const bc=document.getElementById('bc');
   const wrap=document.createElement('div');
@@ -794,8 +584,7 @@ function spawnBalloon(desc,id,x,y){
   const fill=FILLS[ci],dark=DARKS[ci];
   const svgNS='http://www.w3.org/2000/svg';
   const svg=document.createElementNS(svgNS,'svg');
-  svg.setAttribute('viewBox','0 0 150 170');svg.setAttribute('width','150');svg.setAttribute('height','170');
-  svg.style.display='block';
+  svg.setAttribute('viewBox','0 0 150 170');svg.setAttribute('width','150');svg.setAttribute('height','170');svg.style.display='block';
   const body=document.createElementNS(svgNS,'ellipse');
   body.setAttribute('cx','75');body.setAttribute('cy','78');body.setAttribute('rx','68');body.setAttribute('ry','72');body.style.fill=fill;
   const hi=document.createElementNS(svgNS,'ellipse');
@@ -835,35 +624,26 @@ function spawnBalloon(desc,id,x,y){
     wrap.style.animation='floatBob 2.5s ease-in-out infinite';
     const b=document.getElementById('bar-'+id);
     if(b){b.style.transition=`width ${APP.inflateTime}s linear`;b.style.width='0%';}
-    const t2=setTimeout(()=>{
-      if(!document.getElementById(id))return;
-      dismissBalloon(id,desc);
-    },APP.inflateTime*1000);
+    const t2=setTimeout(()=>{if(!document.getElementById(id))return;dismissBalloon(id,desc);},APP.inflateTime*1000);
     APP.timers.push(t2);
   },RISE_MS);
   APP.timers.push(t1);
 }
-
 function onBalloonClick(id,desc){
   if(!APP.gameActive||!APP.stageRunning)return;
   if(!document.getElementById(id))return;
   if(desc.isAnswer){
-    APP.answersHit++;APP.score+=10;
-    updateHUD();burstBalloon(id);spawnConf(id);
+    APP.answersHit++;APP.score+=10;updateHUD();burstBalloon(id);spawnConf(id);
     recordStageHit(true);
-    if(APP.answersHit>=APP.answerCount){
-      APP.stageRunning=false;clearT();
-      setTimeout(()=>advStage(true),500);
-    } else {scheduleNext(600);}
+    if(APP.answersHit>=APP.answerCount){APP.stageRunning=false;clearT();setTimeout(()=>advStage(true),500);}
+    else scheduleNext(600);
   } else {
-    APP.lives--;updateHUD();
-    recordStageHit(false);
+    APP.lives--;updateHUD();recordStageHit(false);
     const w=document.getElementById(id);
     if(w){w.style.animation='none';w.classList.add('wrongshake');setTimeout(()=>{if(w.parentNode)w.classList.remove('wrongshake');},380);}
     if(APP.lives<=0)setTimeout(()=>endStudentGame(false),500);
   }
 }
-
 function dismissBalloon(id,desc){
   const w=document.getElementById(id);if(!w)return;
   w.style.animation='sinkOut .8s ease-in forwards';
@@ -896,7 +676,6 @@ function spawnConf(id){
     area.appendChild(c);setTimeout(()=>c.remove(),1500);
   }
 }
-
 function advStage(ok){
   APP.gameActive=false;clearT();
   if(!ok&&APP.lives<=0){endStudentGame(false);return;}
@@ -912,7 +691,6 @@ function advStage(ok){
     showGameOverlay('✅',`스테이지 ${APP.stagesDone} 완료`,`남은 스테이지: ${rem}회`,()=>{APP.gameActive=true;runStage();},1300);
   }
 }
-
 function endStudentGame(win){
   APP.gameActive=false;APP.stageRunning=false;clearT();
   updatePlayerDB({status:'done',score:APP.score});
@@ -920,17 +698,14 @@ function endStudentGame(win){
   document.getElementById('final-title').textContent=win?'게임 클리어!':'게임 오버';
   document.getElementById('final-sub').textContent=win?'모든 단계를 완료했습니다!':'다음엔 더 잘 할 수 있을 거예요!';
   document.getElementById('final-score').textContent=APP.score+'점';
-  document.getElementById('final-rank-wrap').textContent='결과가 강사 화면에 전송되었습니다 ✓';
   goScreen('screen-student-final');
 }
-
 function showGameOverlay(emoji,title,sub,cb,delay){
   const o=document.getElementById('game-overlay');
   o.innerHTML=`<div style="font-size:48px">${emoji}</div><div style="font-size:20px;font-weight:700;color:var(--text)">${title}</div><div style="font-size:14px;color:var(--text2)">${sub}</div>`;
   o.style.display='flex';
   setTimeout(()=>{o.style.display='none';if(cb)cb();},delay||1400);
 }
-
 function updateHUD(){
   document.getElementById('g-lv').textContent=`${APP.curLevel}단계`;
   document.getElementById('g-sc').textContent=`점수: ${APP.score}`;
@@ -941,23 +716,14 @@ function updateHUD(){
   }).join('');
   document.getElementById('g-st').innerHTML=`<div class="spip">${pips}</div>`;
 }
-
-/* ── DB helpers ── */
 function updatePlayerDB(data){
-  if(!APP.gameCode||!APP.playerId||!db)return;
+  if(!APP.gameCode||!APP.playerId)return;
   db.ref(`games/${APP.gameCode}/players/${APP.playerId}`).update(data);
 }
 function recordStageHit(hit){
-  if(!APP.gameCode||!APP.playerId||!db)return;
-  db.ref(`games/${APP.gameCode}/players/${APP.playerId}/stageHits`).transaction(hits=>{
-    return [...(hits||[]),hit];
-  });
+  if(!APP.gameCode||!APP.playerId)return;
+  db.ref(`games/${APP.gameCode}/players/${APP.playerId}/stageHits`).transaction(hits=>[...(hits||[]),hit]);
 }
-
-/* ── utils ── */
-function v(id){return document.getElementById(id)?.value||'';}
-function showErr(id,msg){const e=document.getElementById(id);if(e){e.textContent=msg;e.style.display='block';}}
-function hideErr(id){const e=document.getElementById(id);if(e)e.style.display='none';}
 function clearT(){APP.timers.forEach(t=>{clearTimeout(t);clearInterval(t);});APP.timers=[];}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
 function cleanupListeners(){APP.listeners.forEach(fn=>fn());APP.listeners=[];}
